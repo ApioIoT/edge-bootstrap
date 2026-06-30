@@ -294,7 +294,7 @@ def main() -> None:
 
   voucher = None
   if len(sys.argv) > 2:
-    nonce = sys.argv[2]
+    voucher = sys.argv[2]
 
   security = Security(nonce, voucher)
   bootstrap = Bootstrap(security)
