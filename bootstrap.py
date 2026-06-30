@@ -145,17 +145,17 @@ class Platform:
     READY = 'ready'
     FAILED = 'failed'
 
-  def setStatus(self, voucher: str, uuid: str, status: Status, on_state: Optional[Status] = None, reason: Optional[str] = None) -> None:
+  def setStatus(self, voucher: str, uuid: str, status: Status, on_status: Optional[Status] = None, reason: Optional[str] = None) -> None:
     try:
       url = urllib.parse.urljoin(self.PLATFORM_API_URI, f"/v1/enrollment/{uuid}?voucher={voucher}")
 
       payload: dict[str, Any] = {
-        "state": status.value,
+        "status": status.value,
       }
 
-      if on_state is not None:
+      if on_status is not None:
         _reason = {
-          "onState": on_state.value,
+          "onStatus": on_status.value,
         }
 
         if reason is not None:
