@@ -166,6 +166,8 @@ class Platform:
       json_payload = json.dumps(payload).encode("utf-8")
 
       req = urllib.request.Request(url, method="PUT", data=json_payload)
+      req.add_header("Content-Type", "application/json")
+
       with urllib.request.urlopen(req, timeout=2):
         pass
       
