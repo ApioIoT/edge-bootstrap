@@ -150,13 +150,18 @@ class Platform:
       url = urllib.parse.urljoin(self.PLATFORM_API_URI, f"/v1/enrollment/{uuid}?voucher={voucher}")
 
       payload: dict[str, Any] = {
-        "state": status,
+        "state": status.value,
       }
-      if reason is not None:
-        payload["reason"] = {
-          "onState": on_state,
-          "msg": reason
+      
+      if on_state is not None:
+        _reason = {
+          "onState": on_state.value,
         }
+
+        if reason is not None:
+          _reason["msg"] = reason
+        
+        payload["reason"] = _reason
 
       json_payload = json.dumps(payload).encode("utf-8")
 
