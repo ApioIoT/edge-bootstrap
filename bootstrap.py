@@ -100,9 +100,9 @@ class Security:
   utility = Retrier()
   os = Os()
   
-  def __init__(self, voucher: Optional[str] = None, nonce: Optional[str] = None) -> None:
-    self._voucher = voucher
+  def __init__(self, nonce: Optional[str] = None, voucher: Optional[str] = None) -> None:
     self._nonce = nonce
+    self._voucher = voucher
 
   def _getVoucher(self) -> str:
     if self._voucher is not None:
