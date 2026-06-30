@@ -16,7 +16,7 @@ class Retrier:
   MAX_RETRIES: int = 10
 
   T = TypeVar("T")
-  def do(self, fn: Callable[..., T], *args: Any, **kwargs: Any) -> T:
+  def run(self, fn: Callable[..., T], *args: Any, **kwargs: Any) -> T:
     last_exception = None
 
     for _ in range(self.MAX_RETRIES):
@@ -176,9 +176,9 @@ class Platform:
     url = urllib.parse.urljoin(self.PLATFORM_API_URI, "/v1/enroll")
 
     payload = {
+      "nonce": nonce,
       "voucher": secureVoucher,
       "serial": deviceSerial,
-      "nonce": nonce
     }
     json_payload = json.dumps(payload).encode("utf-8")
 
@@ -254,15 +254,15 @@ class Bootstrap:
     secureVoucher, nonce = self.security.makeSecureVoucher()
 
     print("[Platform] Enroll")
-    enrollmentUuid, enrollmentUri = self.retrier.do(self.platform.enroll, secureVoucher, nonce, serial)
+    enrollmentUuid, enrollmentUri = self.retrier.run(self.platform.enroll, secureVoucher, nonce, serial)
 
     print("[Platform] Waiting for approve...")
-    rancherUri, apiKey = self.retrier.do(self.platform.waitForApprove, enrollmentUri)
+    rancherUri, apiKey = self.retrier.run(self.platform.waitForApprove, enrollmentUri)
     
     try:
       print("[K3S] Install")
       self.platform.setStatus(secureVoucher, enrollmentUuid, Platform.Status.PROVISIONING_INSTALLING)
-      self.retrier.do(self.os.installK3S)
+      self.retrier.run(self.os.installK3S)
     except Exception as e:
       self.platform.setStatus(secureVoucher, enrollmentUuid, Platform.Status.FAILED, Platform.Status.PROVISIONING_INSTALLING, str(e))
       raise e
@@ -270,7 +270,7 @@ class Bootstrap:
     try:
       print("[K3S] Join to Rancher")
       self.platform.setStatus(secureVoucher, enrollmentUuid, Platform.Status.PROVISIONING_JOIN)
-      self.retrier.do(self.k3s.joinToRancher, rancherUri)
+      self.retrier.run(self.k3s.joinToRancher, rancherUri)
     except Exception as e:
       self.platform.setStatus(secureVoucher, enrollmentUuid, Platform.Status.FAILED, Platform.Status.PROVISIONING_JOIN, str(e))
       raise e
@@ -281,7 +281,7 @@ class Bootstrap:
     try:
       self.platform.setStatus(secureVoucher, enrollmentUuid, Platform.Status.PROVISIONING_CONFIGURING)
       print("[K3S] Set ApiKey on Postgres")
-      self.retrier.do(self.k3s.setApiKeyOnPostgres, apiKey)
+      self.retrier.run(self.k3s.setApiKeyOnPostgres, apiKey)
     except Exception as e:
       self.platform.setStatus(secureVoucher, enrollmentUuid, Platform.Status.FAILED, Platform.Status.PROVISIONING_CONFIGURING, str(e))
       raise e
