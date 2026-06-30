@@ -152,7 +152,7 @@ class Platform:
       payload: dict[str, Any] = {
         "state": status.value,
       }
-      
+
       if on_state is not None:
         _reason = {
           "onState": on_state.value,
@@ -170,7 +170,7 @@ class Platform:
         pass
       
     except Exception as e:
-      print(f"[Platform] {e}")
+      print(f"[Platform] Update status: {e}")
 
   def enroll(self, secureVoucher: str, nonce: str, deviceSerial: str) -> tuple[str, str]:
     url = urllib.parse.urljoin(self.PLATFORM_API_URI, "/v1/enroll")
@@ -275,7 +275,7 @@ class Bootstrap:
       self.platform.setStatus(secureVoucher, enrollmentUuid, Platform.Status.FAILED, Platform.Status.PROVISIONING_JOIN, str(e))
       raise e
 
-    print("[K3S] Waiting for ready...")
+    print("[K3S] Waiting for cluster ready...")
     self.k3s.waitForPostgresReady()
     
     try:
