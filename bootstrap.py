@@ -72,9 +72,9 @@ class Os:
 
 class Hardware:
   SERIAL_FILES: list[str] = [
-    "/sys/class/dmi/id/product_serial",
-    "/proc/device-tree/baseboard-sn",
     "/serial.txt" # TEST
+    "/sys/class/dmi/id/product_serial",
+    "/proc/device-tree/baseboard-sn"
   ]
   EXCLUDED_SERIALS: list[str] = [
     "",
