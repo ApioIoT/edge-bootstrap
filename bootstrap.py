@@ -72,7 +72,7 @@ class Os:
 
 class Hardware:
   SERIAL_FILES: list[str] = [
-    "/serial.txt" # TEST
+    "/serial.txt", # TEST
     "/sys/class/dmi/id/product_serial",
     "/proc/device-tree/baseboard-sn"
   ]
